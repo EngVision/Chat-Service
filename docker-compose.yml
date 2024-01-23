@@ -3,7 +3,7 @@ volumes:
 
 services:
   rocketchat:
-    image: registry.rocket.chat/rocketchat/rocket.chat:${RELEASE:-latest}
+    image: registry.rocket.chat/rocketchat/rocket.chat:6.3.12
     restart: always
     labels:
       traefik.enable: "true"
@@ -23,6 +23,12 @@ services:
       DEPLOY_METHOD: docker
       DEPLOY_PLATFORM: ${DEPLOY_PLATFORM:-}
       REG_TOKEN: ${REG_TOKEN:-}
+      INITIAL_USER: yes
+      ADMIN_USERNAME: engvision_admin
+      ADMIN_NAME: EngVision Admin
+      ADMIN_EMAIL: engvision.dev@gmail.com
+      ADMIN_PASS: EngVision2023@
+      OVERWRITE_SETTING_Show_Setup_Wizard: completed
     depends_on:
       - mongodb
     expose:
