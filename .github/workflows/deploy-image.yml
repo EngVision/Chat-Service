@@ -13,12 +13,6 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     environment: RocketChat
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - context: ./
-            tags: evs-rocket-chat
 
     permissions:
       contents: read
@@ -45,12 +39,20 @@ jobs:
         run: |
           echo IMAGE_REPOSITORY=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
 
-      - name: Build and push Docker image
+      - name: Build and push Docker Prod image
         uses: docker/build-push-action@v4.0.0
         with:
-          context: ${{ matrix.context }}
+          context: ./prod
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_REPOSITORY }}:${{ github.run_number }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_REPOSITORY }}-prod:${{ github.run_number }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build and push Docker Stg image
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: ./stg
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_REPOSITORY }}-stg:${{ github.run_number }}
           labels: ${{ steps.meta.outputs.labels }}
 
   modify-yaml:
@@ -72,7 +74,8 @@ jobs:
         run: |
           git config --global user.name 'minhtringuyennn'
           git config --global user.email 'contact@minhtringuyennn.com'
-          sed -i "s+ghcr.io/engvision/chat-service.*+ghcr.io/engvision/chat-service:${{ github.run_number }}+g" ./k8s/evs-rocket-chat-deployment.yml
+          sed -i "s+ghcr.io/engvision/chat-service-prod.*+ghcr.io/engvision/chat-service-prod:${{ github.run_number }}+g" ./k8s/evs-rocket-chat-deployment.yml
+          sed -i "s+ghcr.io/engvision/chat-service-stg.*+ghcr.io/engvision/chat-service-stg:${{ github.run_number }}+g" ./k8s/evs-rocket-chat-deployment.yml
           git add .
           git commit -m 'Github Actions - Deploy EngVision Rocket Chat build ver ${{ github.run_number }}'
           git push origin main
