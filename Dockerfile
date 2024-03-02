@@ -1,4 +1,4 @@
-FROM registry.rocket.chat/rocketchat/rocket.chat:6.3.12
+FROM registry.rocket.chat/rocketchat/rocket.chat:6.3.11
 
 ENV MONGO_URL="mongodb+srv://admin:5LnPkKh2dx1JFEI6@rs0.u40wfvl.mongodb.net/rocketchat?replicaSet=atlas-p1bt7l-shard-0" \
     MONGO_OPLOG_URL="mongodb+srv://admin:5LnPkKh2dx1JFEI6@rs0.u40wfvl.mongodb.net/local?replicaSet=atlas-p1bt7l-shard-0" \
